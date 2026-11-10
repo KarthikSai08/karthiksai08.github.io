@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ p.name }} | {{ p.role }}</title>
+<meta name="description" content="{{ p.name }}, {{ p.role }}. {{ p.tagline }}">
+<meta property="og:title" content="{{ p.name }} | {{ p.role }}">
+<meta property="og:description" content="{{ p.tagline }}">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+{% if site_url %}<meta property="og:image" content="{{ site_url }}/static/og.png">
+<meta property="og:url" content="{{ site_url }}/">
+<link rel="canonical" href="{{ site_url }}/">{% endif %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"{{ p.name }}","jobTitle":"{{ p.role }}","email":"{{ p.email }}","url":"{{ site_url }}","sameAs":["{{ p.github }}","{{ p.linkedin }}"]}</script>
+<meta name="theme-color" content="#2b2f3d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="stylesheet" href="/static/style.css?v={{ v }}">
+</head>
+<body>
+<div id="bar" aria-hidden="true"></div>
+<header class="nav">
+  <a class="logo" href="#top">karthik<span>.ai</span></a>
+  <nav>
+    <a href="#about">About</a><a href="#projects">Projects</a><a href="#skills">Skills</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+  </nav>
+  <a class="navcta" href="{{ p.resume }}" download>Resume</a>
+  <button id="theme" type="button" aria-label="Switch color theme">Auto</button>
+</header>
+
+<main id="top">
+<section class="hero wrap" data-tone="sky">
+  <div class="hero-copy">
+    <p class="badge"><i></i>Open to AI, GenAI and ML roles</p>
+    <h1>{{ p.name }}</h1>
+    <p class="role">{{ p.role }}</p>
+    <p class="lede">{{ p.tagline }}</p>
+    <div class="actions">
+      <a class="btn primary" href="#projects">View projects</a>
+      <a class="btn" href="{{ p.resume }}" download>Download resume</a>
+    </div>
+    <div class="social">
+      <a href="{{ p.github }}" target="_blank" rel="noopener">GitHub</a>
+      <a href="{{ p.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:{{ p.email }}">Email</a>
+    </div>
+  </div>
+  <div class="trace" aria-label="Example of the Text-to-SQL pipeline I built">
+    <div class="trace-head"><span></span><span></span><span></span><b>text_to_sql.trace</b></div>
+    <ol id="trace">
+      <li><em>question</em> "Top 5 suppliers by returns last quarter?"</li>
+      <li><em>retrieve</em> BM25 + BGE-M3 fused with RRF</li>
+      <li><em>rerank</em> 717 columns narrowed to 3 tables</li>
+      <li><em>generate</em> SELECT ... JOIN ... GROUP BY</li>
+      <li><em>validate</em> sqlglot AST check, PII guard</li>
+      <li class="ok"><em>result</em> 5 rows returned</li>
+    </ol>
+  </div>
+</section>
+
+<section class="wrap stats">
+  {% for value, label in stats %}
+  <div><strong>{{ value }}</strong><span>{{ label }}</span></div>
+  {% endfor %}
+</section>
+
+<section class="wrap sec" data-tone="sky" aria-labelledby="why-h">
+  <h2 id="why-h">What I bring</h2>
+  <div class="why-grid">
+    {% for title, text in why %}<div class="why-card" data-n="0{{ loop.index }}"><h3>{{ title }}</h3><p>{{ text }}</p></div>{% endfor %}
+  </div>
+</section>
+
+<section id="about" class="wrap sec" data-tone="lav">
+  <h2>About</h2>
+  <div class="about">
+    <div class="prose">
+      {% for para in p.summary %}<p>{{ para }}</p>{% endfor %}
+      <p class="muted">Based in {{ p.location }}. Open to roles in {{ p.open_to }}.</p>
+    </div>
+    <div class="edu">
+      <h3>Education</h3>
+      {% for deg, school, year, gpa in education %}
+      <div class="edu-item"><b>{{ deg }}</b><span>{{ school }}</span><small>{{ year }} &middot; {{ gpa }}</small></div>
+      {% endfor %}
+      <h3>Publication</h3>
+      <div class="edu-item"><b>{{ publication.title }}</b><span>{{ publication.venue }}</span><small>{{ publication.date }}</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="wrap sec" data-tone="pur">
+  <h2>Projects</h2>
+  <div class="grid">
+    {% for pr in projects %}
+    <article class="card" data-tone="{{ ['sky','lav','pur'][loop.index0 % 3] }}">
+      <div class="card-top"><h3>{{ pr.title }}</h3><span class="tag">{{ pr.tag }}</span></div>
+      {% if pr.images %}
+      <div class="shots" tabindex="0" aria-label="{{ pr.title }} screenshots">
+        {% for img in pr.images %}<a href="/static/projects/{{ pr.slug }}/{{ img }}" target="_blank" rel="noopener"><img src="/static/projects/{{ pr.slug }}/{{ img }}" alt="{{ pr.title }} demo {{ loop.index }}" loading="lazy"></a>{% endfor %}
+      </div>
+      {% else %}<div class="soon"><span>Demo coming soon</span></div>{% endif %}
+      <ul>{% for pt in pr.points %}<li>{{ pt }}</li>{% endfor %}</ul>
+      <div class="chips">{% for s in pr.stack %}<span>{{ s }}</span>{% endfor %}</div>
+      {% if pr.demo or pr.link %}<div class="links">
+        {% if pr.demo %}<a class="link" href="{{ pr.demo }}" target="_blank" rel="noopener">Live demo</a>{% endif %}
+        {% if pr.link %}<a class="link" href="{{ pr.link }}" target="_blank" rel="noopener">Code on GitHub</a>{% endif %}
+      </div>{% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="skills" class="wrap sec" data-tone="sky">
+  <h2>Skills</h2>
+  <div class="skills">
+    {% for group, items in skills %}
+    <div class="skill-group"><h3>{{ group }}</h3><div class="chips">{% for i in items %}<span>{{ i }}</span>{% endfor %}</div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="experience" class="wrap sec" data-tone="lav">
+  <h2>Experience</h2>
+  <div class="timeline">
+    {% for e in experience %}
+    <div class="job">
+      <div class="job-head"><h3>{{ e.title }}</h3><span>{{ e.period }}</span></div>
+      <p class="muted">{{ e.org }}</p>
+      <ul>{% for pt in e.points %}<li>{{ pt }}</li>{% endfor %}</ul>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="contact" class="wrap sec contact" data-tone="pur">
+  <h2>Let's work together</h2>
+  <p>I'm looking for AI, GenAI and ML engineering roles. The fastest way to reach me is email.</p>
+  <div class="actions">
+    <a class="btn primary" href="mailto:{{ p.email }}">{{ p.email }}</a>
+    <button class="btn" id="copy" type="button" data-email="{{ p.email }}">Copy email</button>
+    <a class="btn" href="{{ p.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="btn" href="{{ p.github }}" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</section>
+</main>
+
+<footer class="wrap foot">
+  <span>{{ p.name }} &middot; Built with FastAPI and Jinja2</span>
+  {% if not static_mode %}<a href="/api/docs">API docs</a>{% endif %}
+</footer>
+<script src="/static/app.js?v={{ v }}"></script>
+</body>
+</html>
